@@ -1,0 +1,15 @@
+namespace: keycloakoperator-system
+namePrefix: keycloakoperator-
+commonLabels:
+  operator: keycloakoperator
+resources:
+- ./namespace.yaml
+- ../crds
+- ../rbac
+- ../operator
+images:
+- name: operator
+  newName: public-docker-image-path
+  newTag: latest
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization

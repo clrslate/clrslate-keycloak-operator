@@ -1,0 +1,90 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: keycloakclients.security.clrslate
+spec:
+  group: security.clrslate
+  names:
+    kind: keycloakclient
+    listKind: keycloakclientList
+    plural: keycloakclients
+    shortNames:
+    - kcclient
+    singular: keycloakclient
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .metadata.namespace
+      name: Namespace
+      priority: 0
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      priority: 0
+      type: date
+    - description: Specifies ID referenced in URI and tokens. For example 'my-client'. For SAML this is also the expected issuer value from authn requests
+      jsonPath: .spec.clientId
+      name: ClientId
+      priority: 0
+      type: string
+    - description: Specifies display name of the client. For example 'My Client'.
+      jsonPath: .spec.name
+      name: Name
+      priority: 0
+      type: string
+    name: v1
+    schema:
+      openAPIV3Schema:
+        properties:
+          status:
+            description: Status object for the entity.
+            properties:
+              status:
+                type: string
+            type: object
+          spec:
+            description: This represents a KeyCloak client
+            properties:
+              clientId:
+                description: Specifies ID referenced in URI and tokens. For example 'my-client'. For SAML this is also the expected issuer value from authn requests
+                pattern: ^[a-z][a-z\-]*$
+                type: string
+              name:
+                description: Specifies display name of the client. For example 'My Client'.
+                type: string
+              enabled:
+                description: Disabled clients cannot initiate a login or have obtained access tokens.
+                type: boolean
+              description:
+                description: Specifies description of the client. For example 'My Client for TimeSheets'. Supports keys for localized values as well.
+                nullable: true
+                type: string
+              redirectUris:
+                description: Valid URI pattern a browser can redirect to after a successful login. Simple wildcards are allowed such as 'http://example.com/*'. Relative path can be specified too such as /my/relative/path/*. Relative paths are relative to the client root URL, or if none is specified the auth server root URL is used. For SAML, you must set valid URI patterns if you are relying on the consumer service URL embedded with the login request.
+                items:
+                  type: string
+                nullable: true
+                type: array
+              webOrigins:
+                description: Allowed CORS origins. To permit all origins of Valid Redirect URIs, add '+'. This does not include the '*' wildcard though. To permit all origins, explicitly add '*'.
+                items:
+                  type: string
+                nullable: true
+                type: array
+              homeUrl:
+                description: Default URL to use when the auth server needs to redirect or link back to the client.
+                nullable: true
+                type: string
+              rootUrl:
+                description: Root URL appended to relative URLs
+                nullable: true
+                type: string
+            required:
+            - clientId
+            - name
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
